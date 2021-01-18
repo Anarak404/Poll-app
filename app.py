@@ -29,8 +29,13 @@ def home():
 
 @app.route('/session/<q_id>/', methods=['GET', 'POST'])
 def session(q_id):
-    print(q_id)
-    return "Dziala"
+    title = Question.query.filter_by(id=q_id).first_or_404()
+
+    return render_template("session.html",
+                           question_title=title.question_text,
+                           option1=title.answers[0].answer_text,
+                           option2=title.answers[1].answer_text,
+                           option3=title.answers[2].answer_text)
 
 
 @app.route('/insert', methods=['POST'])
