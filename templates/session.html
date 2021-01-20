@@ -15,15 +15,15 @@
             </h2>
 
             <div class="form-group">
-                <button id="b1" type="button" class="btn btn-primary btn-block">{{ option1 }}</button>
+                <button id="b1" type="button" class="btn btn-success btn-block">{{ option1 }}</button>
             </div>
 
             <div class="form-group">
-                <button id="b2" type="button" class="btn btn-primary btn-block">{{ option2 }}</button>
+                <button id="b2" type="button" class="btn btn-info btn-block">{{ option2 }}</button>
             </div>
 
             <div class="form-group">
-                <button id="b3" type="button" class="btn btn-primary btn-block">{{ option3 }}</button>
+                <button id="b3" type="button" class="btn btn-warning btn-block">{{ option3 }}</button>
             </div>
 
             <script type="text/javascript">
@@ -60,27 +60,26 @@
                 })
 
             </script>
-            {#TODO: Wyrownac napisy przy progress barach#}
-            <div class="container">
+
+            <div class="container-lg pt-5">
                 <form>
-                    <div class="form-group">
+                    <h2>Results</h2>
+
+                    <div class="form-group pt-3">
                         <div class="progress">
-                            <label>{{ option1 }}</label>
-                            <div id="votes1" class="progress-bar progress-bar-success"></div>
+                            <div id="votes1" class="progress-bar bg-success"></div>
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group pt-3">
                         <div class="progress">
-                            <label class="form-check-label">{{ option2 }}</label>
-                            <div id="votes2" class="progress-bar progress-bar-success"></div>
+                            <div id="votes2" class="progress-bar bg-info"></div>
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group pt-3">
                         <div class="progress">
-                            <label class="form-check-label">{{ option3 }}</label>
-                            <div id="votes3" class="progress-bar progress-bar-success"></div>
+                            <div id="votes3" class="progress-bar bg-warning"></div>
                         </div>
                     </div>
 
