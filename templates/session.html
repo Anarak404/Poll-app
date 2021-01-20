@@ -15,15 +15,15 @@
             </h2>
 
             <div class="form-group">
-                <button type="button" class="btn btn-primary btn-block">{{ option1 }}</button>
+                <button id="b1" type="button" class="btn btn-primary btn-block">{{ option1 }}</button>
             </div>
 
             <div class="form-group">
-                <button type="button" class="btn btn-primary btn-block">{{ option2 }}</button>
+                <button id="b2" type="button" class="btn btn-primary btn-block">{{ option2 }}</button>
             </div>
 
             <div class="form-group">
-                <button type="button" class="btn btn-primary btn-block">{{ option3 }}</button>
+                <button id="b3" type="button" class="btn btn-primary btn-block">{{ option3 }}</button>
             </div>
 
             <script type="text/javascript">
@@ -33,6 +33,18 @@
 
                 socket.on('connect', function () {
                     socket.emit('my event', question_id);
+                });
+
+                $('#b1').on('click', function () {
+                    socket.emit('vote', 0);
+                });
+
+                $('#b2').on('click', function () {
+                    socket.emit('vote', 1);
+                });
+
+                $('#b3').on('click', function () {
+                    socket.emit('vote', 2);
                 });
 
             </script>

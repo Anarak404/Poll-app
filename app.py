@@ -80,5 +80,16 @@ def connect():
     join_room(request.args['room_id'])
 
 
+@socketio.on('vote')
+def handle_vote(arg):
+    ques_id = request.args['room_id']
+    print(ques_id)
+
+    question = Question.query.filter_by(id=ques_id).first_or_404()
+
+    voted_answer = question.answers[arg].id
+    print(voted_answer)
+
+
 if __name__ == '__main__':
     socketio.run(app, port=8080, debug=True)
