@@ -87,8 +87,13 @@ def handle_vote(arg):
 
     question = Question.query.filter_by(id=ques_id).first_or_404()
 
-    voted_answer = question.answers[arg].id
-    print(voted_answer)
+    voted_answer_id = question.answers[arg].id
+    print(voted_answer_id)
+
+    voted_answer = Answer.query.filter_by(id=voted_answer_id).first()
+    new_vote = voted_answer.votes + 1
+    voted_answer.votes = new_vote
+    db.session.commit()
 
 
 if __name__ == '__main__':
