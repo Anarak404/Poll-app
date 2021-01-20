@@ -31,10 +31,6 @@
 
                 var socket = io('localhost:8080', {query: {room_id: question_id}});
 
-                socket.on('connect', function () {
-                    socket.emit('my event', question_id);
-                });
-
                 $('#b1').on('click', function () {
                     socket.emit('vote', 0);
                 });
@@ -52,7 +48,7 @@
 
                     var votes1 = Math.round((results.result1 * 100) / total_votes);
                     var votes2 = Math.round((results.result2 * 100) / total_votes);
-                    var votes3 = 100 - votes1 - votes2;
+                    var votes3 = Math.round((results.result3 * 100) / total_votes);
 
                     $('#votes1').css('width', votes1 + '%');
                     $('#votes2').css('width', votes2 + '%');

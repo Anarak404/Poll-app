@@ -5,7 +5,7 @@ from flask_socketio import SocketIO, join_room, emit
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'SuperSecretKey'
 socketio = SocketIO(app, cors_allowed_origins="*")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:''@localhost/poll'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:''@localhost/votedatabase'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -31,7 +31,7 @@ def home():
 
 @app.route('/session/<q_id>/', methods=['GET', 'POST'])
 def session(q_id):
-    title = Question.query.filter_by(id=q_id).first_or_404()
+    title = db.session.query(Question).filter(Question.id == q_id).first_or_404()
 
     return render_template("session.html", id_question=q_id,
                            question_title=title.question_text,
@@ -46,48 +46,32 @@ def insert():
     db.session.add(question)
     db.session.commit()
 
-    answer1 = Answer(answer_text=request.form['a_1'],
-                     votes=0,
-                     question_id=question.id)
+    answers = [
+        Answer(answer_text=request.form['a_1'], votes=0, question_id=question.id),
+        Answer(answer_text=request.form['a_2'], votes=0, question_id=question.id),
+        Answer(answer_text=request.form['a_3'], votes=0, question_id=question.id)
+    ]
 
-    answer2 = Answer(answer_text=request.form['a_2'],
-                     votes=0,
-                     question_id=question.id)
-
-    answer3 = Answer(answer_text=request.form['a_3'],
-                     votes=0,
-                     question_id=question.id)
-
-    db.session.add(answer1)
-    db.session.add(answer2)
-    db.session.add(answer3)
+    db.session.add_all(answers)
     db.session.commit()
 
     return redirect(url_for('session', q_id=question.id))
 
 
-@socketio.on('my event')
-def my_event(room_id):
-    print("jest w pokoju " + room_id)
-
-
 @socketio.on('connect')
 def connect():
-    print("jestem w " + request.args['room_id'])
     join_room(request.args['room_id'])
 
 
 @socketio.on('vote')
 def handle_vote(arg):
     ques_id = request.args['room_id']
-    print(ques_id)
 
-    question = Question.query.filter_by(id=ques_id).first_or_404()
+    question = db.session.query(Question).filter(Question.id == ques_id).first()
 
     voted_answer_id = question.answers[arg].id
-    print(voted_answer_id)
 
-    voted_answer = Answer.query.filter_by(id=voted_answer_id).first()
+    voted_answer = db.session.query(Answer).filter(Answer.id == voted_answer_id).first()
     new_vote = voted_answer.votes + 1
     voted_answer.votes = new_vote
     db.session.commit()
