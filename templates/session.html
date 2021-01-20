@@ -10,6 +10,7 @@
     <div class="container-md">
         <form>
             <h2>
+                <label id="id_ques" class="form-check-label">{{ id_question }}</label>
                 <label class="form-check-label">{{ question_title }}</label>
             </h2>
 
@@ -25,9 +26,25 @@
                 <button type="button" class="btn btn-primary btn-block">{{ option3 }}</button>
             </div>
 
+            <script type="text/javascript">
+                var question_id = $('#id_ques').text();
 
-            <div>
-                <canvas id="pieChart" style="max-width: 500px;"></canvas>
+                var socket = io('localhost:8080', {query: { room_id: question_id }});
+
+                socket.on('connect', function () {
+                    socket.emit('my event', question_id);
+                });
+
+            </script>
+
+            <div class="form-group">
+                <p class="text-center">{{ v1 }}</p>
+            </div>
+            <div class="form-group">
+                <p class="text-center">{{ v2 }}</p>
+            </div>
+            <div class="form-group">
+                <p class="text-center">{{ v3 }}</p>
             </div>
 
         </form>

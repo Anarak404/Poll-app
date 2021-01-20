@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO, join_room
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'SuperSecretKey'
+socketio = SocketIO(app, cors_allowed_origins="*")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:''@localhost/poll'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -31,11 +33,14 @@ def home():
 def session(q_id):
     title = Question.query.filter_by(id=q_id).first_or_404()
 
-    return render_template("session.html",
+    return render_template("session.html", id_question=q_id,
                            question_title=title.question_text,
                            option1=title.answers[0].answer_text,
                            option2=title.answers[1].answer_text,
-                           option3=title.answers[2].answer_text)
+                           option3=title.answers[2].answer_text,
+                           v1=title.answers[0].votes,
+                           v2=title.answers[1].votes,
+                           v3=title.answers[2].votes)
 
 
 @app.route('/insert', methods=['POST'])
@@ -64,5 +69,16 @@ def insert():
     return redirect(url_for('session', q_id=question.id))
 
 
+@socketio.on('my event')
+def my_event(room_id):
+    print("jest w pokoju " + room_id)
+
+
+@socketio.on('connect')
+def connect():
+    print("jestem w " + request.args['room_id'])
+    join_room(request.args['room_id'])
+
+
 if __name__ == '__main__':
-    app.run()
+    socketio.run(app, port=8080, debug=True)
