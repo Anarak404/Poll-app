@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from flask_socketio import SocketIO, join_room
+from flask_socketio import SocketIO, join_room, emit
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'SuperSecretKey'
@@ -37,10 +37,7 @@ def session(q_id):
                            question_title=title.question_text,
                            option1=title.answers[0].answer_text,
                            option2=title.answers[1].answer_text,
-                           option3=title.answers[2].answer_text,
-                           v1=title.answers[0].votes,
-                           v2=title.answers[1].votes,
-                           v3=title.answers[2].votes)
+                           option3=title.answers[2].answer_text)
 
 
 @app.route('/insert', methods=['POST'])
@@ -94,6 +91,12 @@ def handle_vote(arg):
     new_vote = voted_answer.votes + 1
     voted_answer.votes = new_vote
     db.session.commit()
+
+    result1 = question.answers[0].votes
+    result2 = question.answers[1].votes
+    result3 = question.answers[2].votes
+
+    emit('vote results', {'result1': result1, 'result2': result2, 'result3': result3}, room=ques_id)
 
 
 if __name__ == '__main__':

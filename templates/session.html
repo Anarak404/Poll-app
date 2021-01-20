@@ -29,7 +29,7 @@
             <script type="text/javascript">
                 var question_id = $('#id_ques').text();
 
-                var socket = io('localhost:8080', {query: { room_id: question_id }});
+                var socket = io('localhost:8080', {query: {room_id: question_id}});
 
                 socket.on('connect', function () {
                     socket.emit('my event', question_id);
@@ -47,16 +47,44 @@
                     socket.emit('vote', 2);
                 });
 
-            </script>
+                socket.on('vote results', function (results) {
+                    var total_votes = results.result1 + results.result2 + results.result3;
 
-            <div class="form-group">
-                <p class="text-center">{{ v1 }}</p>
-            </div>
-            <div class="form-group">
-                <p class="text-center">{{ v2 }}</p>
-            </div>
-            <div class="form-group">
-                <p class="text-center">{{ v3 }}</p>
+                    var votes1 = Math.round((results.result1 * 100) / total_votes);
+                    var votes2 = Math.round((results.result2 * 100) / total_votes);
+                    var votes3 = 100 - votes1 - votes2;
+
+                    $('#votes1').css('width', votes1 + '%');
+                    $('#votes2').css('width', votes2 + '%');
+                    $('#votes3').css('width', votes3 + '%');
+                })
+
+            </script>
+            {#TODO: Wyrownac napisy przy progress barach#}
+            <div class="container">
+                <form>
+                    <div class="form-group">
+                        <div class="progress">
+                            <label>{{ option1 }}</label>
+                            <div id="votes1" class="progress-bar progress-bar-success"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="progress">
+                            <label class="form-check-label">{{ option2 }}</label>
+                            <div id="votes2" class="progress-bar progress-bar-success"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="progress">
+                            <label class="form-check-label">{{ option3 }}</label>
+                            <div id="votes3" class="progress-bar progress-bar-success"></div>
+                        </div>
+                    </div>
+
+                </form>
             </div>
 
         </form>
